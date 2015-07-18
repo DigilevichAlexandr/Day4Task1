@@ -1,0 +1,108 @@
+using System;
+
+namespace day4_task1
+{
+    class SortClass
+    {
+        public static void SortLinesKind(int[][] arr, int k)
+        {
+            QuickSortKind(arr, 0,arr.Length-1, ref k);
+
+        }
+
+
+        static int Partition(int[][] numbers, int left, int right, ref int k)
+        {
+
+
+            int pivot = SortClass.FindKind(numbers[left], k);
+            while (true)
+            {
+                if (k % 2 == 1)
+                {
+                    while (SortClass.FindKind(numbers[left], k) < pivot)
+                        left++;
+                    while (SortClass.FindKind(numbers[right], k) > pivot)
+                        right--;
+                }
+                else
+                {
+                    while (SortClass.FindKind(numbers[left], k) > pivot)
+                        left++;
+                    while (SortClass.FindKind(numbers[right], k) < pivot)
+                        right--;
+                }
+                if (SortClass.FindKind(numbers[right], k) == pivot && SortClass.FindKind(numbers[left], k) == pivot)
+                {
+                    left++;
+                }
+                if (left < right)
+                {
+                    int[] temp = numbers[right];
+                    numbers[right] = numbers[left];
+                    numbers[left] = temp;
+                }
+                else
+                {
+                    return right;
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// 1 - 2 - в порядке возрастания(убывания) максимальных по модулю элементов строк матрицы;
+        /// 3 - 4 - в порядке возрастания(убывания)  сумм элементов строк матрицы.
+        /// </summary>
+        /// <param name="arr"></param>
+        /// <param name="kind"></param>
+        /// 
+        static void QuickSortKind(int[][] arr, int left, int right, ref int k)
+        {
+            if (left < right)
+            {
+                int pivot = Partition(arr, left, right, ref k);
+                if (pivot > 1)
+                    QuickSortKind(arr, left, pivot - 1, ref k);
+                if (pivot + 1 < right)
+                    QuickSortKind(arr, pivot + 1, right, ref k);
+            }
+        }
+
+        private static int FindKind(int[] arr, int k)
+        {
+            IFind f;
+            if (k == 1 || k == 2)
+                f = new FindAbsMax();
+            else
+                f = new FindSum();
+            return f.Find(arr);
+        }
+
+        private class FindAbsMax : IFind
+        {
+            int IFind.Find(int[] arr)
+            {
+                int max = Math.Abs(arr[0]), abse = 0;
+                for (int i = 1; i < arr.Length; i++)
+                {
+                    abse = Math.Abs(arr[i]);
+                    if (abse > max)
+                        max = abse;
+                }
+                return max;
+            }
+        }
+
+        private class FindSum : IFind
+        {
+            int IFind.Find(int[] arr)
+            {
+                int sum = 0;
+                for (int i = 1; i < arr.Length; i++)
+                    sum += arr[i];
+                return sum;
+            }
+        }
+    }
+}
