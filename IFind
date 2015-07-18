@@ -1,0 +1,9 @@
+using System;
+
+namespace day4_task1
+{
+    public interface IFind
+    {
+        int Find(int[] arr);
+    }
+}
